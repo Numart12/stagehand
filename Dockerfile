@@ -1,21 +1,25 @@
-# Stagehand Dockerfile для Railway
+# 🐳 Stagehand API Dockerfile для Railway
 
+# Выкарыстоўваем афіцыйны Node.js вобраз
 FROM node:18
 
-# Стварыць дырэкторыю для Stagehand
+# Стварыць рабочую дырэкторыю
 WORKDIR /app
 
-# Капіруем package.json і lock файл
+# Капіруем файл package.json і package-lock.json (калі ёсць)
 COPY package*.json ./
 
 # Усталёўваем залежнасці
 RUN npm install
 
-# Капіруем увесь код праекта
+# Капіруем увесь праект
 COPY . .
 
-# Будаваць TypeScript-праект (стварыць dist/index.js)
-RUN npm run build
+# Будаваць (калі Stagehand мае TS -> JS зборку)
+RUN npm run build || true
 
-# Запускаем Stagehand
-CMD ["npm", "start"]
+# Адкрываем порт 3000 для Railway
+EXPOSE 3000
+
+# Каманда запуску API-сервера
+CMD ["npx", "tsx", "api.ts"]
